@@ -291,6 +291,7 @@ ssize_t WriteDataTcp(TTcpConnectedPort *TcpConnectedPort,unsigned char *data, si
       }
      total_bytes_written += bytes_written;
    }
+   printf("WriteDataTcp> (%lu) %s\n", length, data);
    return(total_bytes_written);
 }
 //-----------------------------------------------------------------
