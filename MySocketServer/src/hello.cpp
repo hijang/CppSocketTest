@@ -26,7 +26,7 @@ std::string getOpenSSLError()
 /*---------------------------------------------------------------------*/
 SSL_CTX* InitServerCTX(void)
 {
-    SSL_METHOD *method;
+    const SSL_METHOD *method;
     SSL_CTX *ctx;
  
     SSL_library_init();
@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
 
         // SSL Context 관련 구조체 선언
         SSL_CTX *ctx = InitServerCTX();
-        LoadCertificates(ctx, "../public")
+        LoadCertificates(ctx, "/home/tehloo/work/CppSocketTest/MySocketServer/certificate/server.pem", "/home/tehloo/work/CppSocketTest/MySocketServer/certificate/server.key");
 
         //  Listen
         if ((TcpListenPort = OpenTcpListenPort(5555)) == NULL)
@@ -110,7 +110,7 @@ int main(int argc, char *argv[])
         }
        
         /* Get the cipher – opt */
-        printf("SSL connection using %sn", SSL_get_cipher(ssl));
+        printf("SSL connection using %s\n", SSL_get_cipher(ssl));
 
         //  TODO: client 인증서를 받음 
 #if 0
