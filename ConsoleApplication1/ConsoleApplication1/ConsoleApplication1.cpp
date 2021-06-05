@@ -10,7 +10,7 @@ int main()
 
     TTcpConnectedPort* TcpConnectedPort = NULL;
     bool retvalue;
-    const char* hostname = "172.19.3.100";
+    const char* hostname = "172.27.59.14";
     const char* port = "5555";
 
     if ((TcpConnectedPort = OpenTcpConnection(hostname, port)) == NULL)  // Open UDP Network port
@@ -26,15 +26,18 @@ int main()
 
         if (ReadDataTcp(TcpConnectedPort, (unsigned char*)&imagesize, sizeof(imagesize)) != sizeof(imagesize)) return(false);
 
-        imagesize = ntohl(imagesize); // convert image size to host format
+        //imagesize = ntohl(imagesize); // convert image size to host format
 
         printf("imagesize??? %d\n", imagesize);
         if (imagesize < 0) return false;
 
         buff = new (std::nothrow) unsigned char[imagesize];
         if (buff == NULL) return false;
+        memset(buff, imagesize, 0x00);
 
-        printf("%d\n", buff);
+        ReadDataTcp(TcpConnectedPort, buff, imagesize);
+
+        printf("%s\n", buff);
         return false;
     }
 
