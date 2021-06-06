@@ -5,14 +5,17 @@
 #include "NetworkTCP.h"
 /* 
 * openssl 설치 및 설정 변경
-* - openssl 패키지 설치 - 
+* - openssl 패키지 설치 - https://slproweb.com/products/Win32OpenSSL.html (Win32 OpenSSL v1.1.1k)
 * - include directory 추가 (프로젝트 > ... 속성 > C/C++ > 일반 > 추가 디렉토리) - C:\Program Files\OpenSSL-Win64\include
 * - library directory 추가 (프로젝트 > ... 속성 > 링커 > 일반 > 추가 디렉토리) - C:\Program Files\OpenSSL-Win64\lib
 * - library dependancy 추가 (프로젝트 > ... 속성 > 링커 > 입력 > 추가 종속성) - libcrypto.lib;libssl.lib
-* https://stackoverflow.com/questions/11383942/how-to-use-openssl-with-visual-studio
 */ 
 #include <openssl/ssl.h>
 #include <openssl/err.h>
+
+#define CHK_NULL(x) if((x) == NULL) exit(1);
+#define CHK_ERR(err, s) if((err) == -1) { perror(s); exit(1); }
+#define CHK_SSL(err) if((err) == -1) { ERR_print_errors_fp(stderr); exit(2); }
 
 /*---------------------------------------------------------------------*/
 /*--- InitCTX - initialize the SSL engine.                          ---*/
@@ -38,6 +41,32 @@ SSL_CTX* InitCTX(void)
     return ctx;
 }
 
+/*---------------------------------------------------------------------*/
+/*--- LoadCertificates - load from files.                           ---*/
+/*---------------------------------------------------------------------*/
+void LoadCertificates(SSL_CTX* ctx, const char* CertFile, const char* KeyFile)
+{
+    std::cout << "Load certifcates. cert: " << CertFile << "/ key: " << KeyFile << std::endl;
+    /* set the local certificate from CertFile */
+    if (SSL_CTX_use_certificate_file(ctx, CertFile, SSL_FILETYPE_PEM) <= 0)
+    {
+        ERR_print_errors_fp(stderr);
+        abort();
+    }
+    /* set the private key from KeyFile (may be the same as CertFile) */
+    if (SSL_CTX_use_PrivateKey_file(ctx, KeyFile, SSL_FILETYPE_PEM) <= 0)
+    {
+        ERR_print_errors_fp(stderr);
+        abort();
+    }
+    /* verify private key */
+    if (!SSL_CTX_check_private_key(ctx))
+    {
+        fprintf(stderr, "Private key does not match the public certificate\n");
+        abort();
+    }
+}
+
 
 int main()
 {
@@ -48,10 +77,12 @@ int main()
 
     TTcpConnectedPort* TcpConnectedPort = NULL;
     bool retvalue;
-    const char* hostname = "172.27.59.14";
+    const char* hostname = "172.26.71.209";
     const char* port = "5555";
 
     ctx = InitCTX();
+    LoadCertificates(ctx, "..\\..\\Certificates\\client.crt", "..\\..\\Certificates\\client.key");
+
     ssl = SSL_new(ctx);
 
     if ((TcpConnectedPort = OpenTcpConnection(hostname, port)) == NULL)  // Open UDP Network port
@@ -64,6 +95,27 @@ int main()
     if (SSL_connect(ssl) == -1) {
         printf("Connect failed\n");
         return(-1);
+    }
+
+    X509* client_cert = SSL_get_peer_certificate(ssl);
+    if (client_cert != NULL) {
+        printf("Client certificate:\n");
+
+        char* str = X509_NAME_oneline(X509_get_subject_name(client_cert), 0, 0);
+        CHK_NULL(str);
+        printf("\t subject: %s\n", str);
+        OPENSSL_free(str);
+
+        str = X509_NAME_oneline(X509_get_issuer_name(client_cert), 0, 0);
+        CHK_NULL(str);
+        printf("\t issuer: %s\n", str);
+        OPENSSL_free(str);
+
+        /* We could do all sorts of certificate verification stuff here before deallocating the certificate. */
+        X509_free(client_cert);
+    }
+    else {
+        printf("Client does not have certificate.\n");
     }
 
     printf("Connected~!\n");
