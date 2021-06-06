@@ -6,7 +6,7 @@
 
 #define CHK_NULL(x) if((x) == NULL) exit(1);
 #define CHK_ERR(err, s) if((err) == -1) { perror(s); exit(1); }
-// #define CHK_SSL(err) if((err) == -1) { ERR_print_errors_fp(stderr); exit(2); }
+#define CHK_SSL(err) if((err) == -1) { ERR_print_errors_fp(stderr); exit(2); }
 
 static std::vector<unsigned char> sendbuff;
 
@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
 
         // SSL Context 관련 구조체 선언
         SSL_CTX *ctx = InitServerCTX();
-        LoadCertificates(ctx, "/home/tehloo/work/CppSocketTest/MySocketServer/certificate/server.pem", "/home/tehloo/work/CppSocketTest/MySocketServer/certificate/server.key");
+        LoadCertificates(ctx, "../../Certificates/server.pem", "../../Certificates/server.key");
 
         //  Listen
         if ((TcpListenPort = OpenTcpListenPort(5555)) == NULL)
@@ -113,30 +113,30 @@ int main(int argc, char *argv[])
         printf("SSL connection using %s\n", SSL_get_cipher(ssl));
 
         //  TODO: client 인증서를 받음 
-#if 0
-        client_cert = SSL_get_peer_certificate(ssl);
+        X509 *client_cert = SSL_get_peer_certificate(ssl);
         if(client_cert != NULL) {
-            printf(“Client certificate:n“);
+            printf("Client certificate:\n");
            
-            str = X509_NAME_oneline(X509_get_subject_name(client_cert), 0, 0);
+            char* str = X509_NAME_oneline(X509_get_subject_name(client_cert), 0, 0);
             CHK_NULL(str);
-            printf(“t subject: %sn“, str);
+            printf("\t subject: %s\n", str);
             OPENSSL_free(str);
            
             str = X509_NAME_oneline(X509_get_issuer_name(client_cert), 0, 0);
             CHK_NULL(str);
-            printf(“t issuer: %sn“, str);
+            printf("\t issuer: %s\n", str);
             OPENSSL_free(str);
            
             /* We could do all sorts of certificate verification stuff here before deallocating the certificate. */
             X509_free(client_cert);
         } else {
-            printf(“Client does not have certificate.n“);
+            printf("Client does not have certificate.\n");
         }
-#endif
 
-        std::string msg_to_send = "Hi There~!!!";
+
+        std::string msg_to_send = "Hello There~!!!";
         unsigned int data_size = msg_to_send.length() + 1;
+        std::cout << "SENDING : " << msg_to_send << std::endl;
 
         if (!ssl)
         {
