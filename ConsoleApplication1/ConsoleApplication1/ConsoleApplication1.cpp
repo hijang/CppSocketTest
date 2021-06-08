@@ -17,6 +17,21 @@
 #define CHK_ERR(err, s) if((err) == -1) { perror(s); exit(1); }
 #define CHK_SSL(err) if((err) == -1) { ERR_print_errors_fp(stderr); exit(2); }
 
+static const char* root_ca = "-----BEGIN CERTIFICATE-----\n"
+                            "MIICODCCAd8CFGnngwBSCkZRYpt92Eo8R4SyB1h8MAoGCCqGSM49BAMCMIGdMQsw\n"
+                            "CQYDVQQGEwJLUjEOMAwGA1UECAwFU2VvdWwxEDAOBgNVBAcMB0dhbmduYW0xDDAK\n"
+                            "BgNVBAoMA0xHRTEWMBQGA1UECwwNU2VjU3BlY2lhbGlzdDElMCMGA1UEAwwcNHRl\n"
+                            "bnRpYWwgQ0EgUm9vdCBDZXJ0aWZpY2F0ZTEfMB0GCSqGSIb3DQEJARYQdGVobG9v\n"
+                            "QGdtYWlsLmNvbTAgFw0yMTA2MDUxNzEwNThaGA80NzU5MDUwMjE3MTA1OFowgZ0x\n"
+                            "CzAJBgNVBAYTAktSMQ4wDAYDVQQIDAVTZW91bDEQMA4GA1UEBwwHR2FuZ25hbTEM\n"
+                            "MAoGA1UECgwDTEdFMRYwFAYDVQQLDA1TZWNTcGVjaWFsaXN0MSUwIwYDVQQDDBw0\n"
+                            "dGVudGlhbCBDQSBSb290IENlcnRpZmljYXRlMR8wHQYJKoZIhvcNAQkBFhB0ZWhs\n"
+                            "b29AZ21haWwuY29tMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE4O7qjNWPVgUF\n"
+                            "5CPbbe24bAGyV+AKKrrtbQ/eaYn90kpmtkL7o5br7GsZISW2SBbmBmYRH4Igg3/Y\n"
+                            "ftf4j0BCTDAKBggqhkjOPQQDAgNHADBEAiByX2OOGwkPgJm0hFm/Z5UjTvkLbPUK\n"
+                            "txYcyeSWQB/hzAIgez3HVhXUOKoAat9/hS86IG/bdubhggy4wOujM2ebfXM=\n"
+                            "-----END CERTIFICATE-----";
+
 /*---------------------------------------------------------------------*/
 /*--- InitCTX - initialize the SSL engine.                          ---*/
 /*---------------------------------------------------------------------*/
@@ -67,6 +82,28 @@ void LoadCertificates(SSL_CTX* ctx, const char* CertFile, const char* KeyFile)
     }
 }
 
+int VerifyCertificate(SSL_CTX* ctx) {
+    X509_STORE* store;
+    X509* cert = NULL;
+    BIO* bio = BIO_new_mem_buf(root_ca, -1);
+
+    PEM_read_bio_X509(bio, &cert, 0, NULL);
+    if (cert == NULL) {
+        printf("PEM_read_bio_X509 failed...\n");
+    }
+
+    /* get a pointer to the X509 certificate store (which may be empty!) */
+    store = SSL_CTX_get_cert_store((SSL_CTX*)ctx);
+
+    /* add our certificate to this store */
+    if (X509_STORE_add_cert(store, cert) == 0) {
+        printf("error adding certificate\n");
+    }
+
+    X509_STORE_CTX* store_ctx = X509_STORE_CTX_new();
+    X509_STORE_CTX_init(store_ctx, store, cert, NULL);
+    return X509_verify_cert(store_ctx);;
+}
 
 int main()
 {
@@ -77,6 +114,7 @@ int main()
 
     TTcpConnectedPort* TcpConnectedPort = NULL;
     bool retvalue;
+
     const char* hostname = "172.26.71.209";
     const char* port = "5555";
 
@@ -115,7 +153,19 @@ int main()
         X509_free(client_cert);
     }
     else {
-        printf("Client does not have certificate.\n");
+        printf("Server does not have certificate.\n");
+        return -1;
+    }
+
+    int verified = VerifyCertificate(ctx);
+    if (verified == 0) {
+        printf("Verify failed (%d)\n", verified);
+
+        SSL_free(ssl);
+
+        CloseTcpConnectedPort(&TcpConnectedPort); // Close network port;
+        SSL_CTX_free(ctx);
+        return -1;
     }
 
     printf("Connected~!\n");
@@ -138,7 +188,6 @@ int main()
         ReadDataTcp(TcpConnectedPort, buff, imagesize);
 
         printf("%s\n", buff);
-        return false;
     }
     else 
     {
@@ -155,7 +204,6 @@ int main()
 
         SSL_read(ssl, buff, imagesize);
         printf("%s\n", buff);
-        return false;
     }
 
     SSL_free(ssl);
