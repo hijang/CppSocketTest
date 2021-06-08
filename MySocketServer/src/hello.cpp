@@ -24,6 +24,42 @@ static const char* root_ca = "-----BEGIN CERTIFICATE-----\n"
                         "txYcyeSWQB/hzAIgez3HVhXUOKoAat9/hS86IG/bdubhggy4wOujM2ebfXM=\n"
                         "-----END CERTIFICATE-----";
 
+static const char* asr_ca = "-----BEGIN CERTIFICATE-----\n"
+                            "MIIGGTCCBAGgAwIBAgIQE31TnKp8MamkM3AZaIR6jTANBgkqhkiG9w0BAQwFADCB\n"
+                            "iDELMAkGA1UEBhMCVVMxEzARBgNVBAgTCk5ldyBKZXJzZXkxFDASBgNVBAcTC0pl\n"
+                            "cnNleSBDaXR5MR4wHAYDVQQKExVUaGUgVVNFUlRSVVNUIE5ldHdvcmsxLjAsBgNV\n"
+                            "BAMTJVVTRVJUcnVzdCBSU0EgQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkwHhcNMTgx\n"
+                            "MTAyMDAwMDAwWhcNMzAxMjMxMjM1OTU5WjCBlTELMAkGA1UEBhMCR0IxGzAZBgNV\n"
+                            "BAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEYMBYGA1UE\n"
+                            "ChMPU2VjdGlnbyBMaW1pdGVkMT0wOwYDVQQDEzRTZWN0aWdvIFJTQSBPcmdhbml6\n"
+                            "YXRpb24gVmFsaWRhdGlvbiBTZWN1cmUgU2VydmVyIENBMIIBIjANBgkqhkiG9w0B\n"
+                            "AQEFAAOCAQ8AMIIBCgKCAQEAnJMCRkVKUkiS/FeN+S3qU76zLNXYqKXsW2kDwB0Q\n"
+                            "9lkz3v4HSKjojHpnSvH1jcM3ZtAykffEnQRgxLVK4oOLp64m1F06XvjRFnG7ir1x\n"
+                            "on3IzqJgJLBSoDpFUd54k2xiYPHkVpy3O/c8Vdjf1XoxfDV/ElFw4Sy+BKzL+k/h\n"
+                            "fGVqwECn2XylY4QZ4ffK76q06Fha2ZnjJt+OErK43DOyNtoUHZZYQkBuCyKFHFEi\n"
+                            "rsTIBkVtkuZntxkj5Ng2a4XQf8dS48+wdQHgibSov4o2TqPgbOuEQc6lL0giE5dQ\n"
+                            "YkUeCaXMn2xXcEAG2yDoG9bzk4unMp63RBUJ16/9fAEc2wIDAQABo4IBbjCCAWow\n"
+                            "HwYDVR0jBBgwFoAUU3m/WqorSs9UgOHYm8Cd8rIDZsswHQYDVR0OBBYEFBfZ1iUn\n"
+                            "Z/kxwklD2TA2RIxsqU/rMA4GA1UdDwEB/wQEAwIBhjASBgNVHRMBAf8ECDAGAQH/\n"
+                            "AgEAMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAbBgNVHSAEFDASMAYG\n"
+                            "BFUdIAAwCAYGZ4EMAQICMFAGA1UdHwRJMEcwRaBDoEGGP2h0dHA6Ly9jcmwudXNl\n"
+                            "cnRydXN0LmNvbS9VU0VSVHJ1c3RSU0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNy\n"
+                            "bDB2BggrBgEFBQcBAQRqMGgwPwYIKwYBBQUHMAKGM2h0dHA6Ly9jcnQudXNlcnRy\n"
+                            "dXN0LmNvbS9VU0VSVHJ1c3RSU0FBZGRUcnVzdENBLmNydDAlBggrBgEFBQcwAYYZ\n"
+                            "aHR0cDovL29jc3AudXNlcnRydXN0LmNvbTANBgkqhkiG9w0BAQwFAAOCAgEAThNA\n"
+                            "lsnD5m5bwOO69Bfhrgkfyb/LDCUW8nNTs3Yat6tIBtbNAHwgRUNFbBZaGxNh10m6\n"
+                            "pAKkrOjOzi3JKnSj3N6uq9BoNviRrzwB93fVC8+Xq+uH5xWo+jBaYXEgscBDxLmP\n"
+                            "bYox6xU2JPti1Qucj+lmveZhUZeTth2HvbC1bP6mESkGYTQxMD0gJ3NR0N6Fg9N3\n"
+                            "OSBGltqnxloWJ4Wyz04PToxcvr44APhL+XJ71PJ616IphdAEutNCLFGIUi7RPSRn\n"
+                            "R+xVzBv0yjTqJsHe3cQhifa6ezIejpZehEU4z4CqN2mLYBd0FUiRnG3wTqN3yhsc\n"
+                            "SPr5z0noX0+FCuKPkBurcEya67emP7SsXaRfz+bYipaQ908mgWB2XQ8kd5GzKjGf\n"
+                            "FlqyXYwcKapInI5v03hAcNt37N3j0VcFcC3mSZiIBYRiBXBWdoY5TtMibx3+bfEO\n"
+                            "s2LEPMvAhblhHrrhFYBZlAyuBbuMf1a+HNJav5fyakywxnB2sJCNwQs2uRHY1ihc\n"
+                            "6k/+JLcYCpsM0MF8XPtpvcyiTcaQvKZN8rG61ppnW5YCUtCC+cQKXA0o4D/I+pWV\n"
+                            "idWkvklsQLI+qGu41SWyxP7x09fn1txDAXYw+zuLXfdKiXyaNb78yvBXAfCNP6CH\n"
+                            "MntHWpdLgtJmwsQt6j8k9Kf5qLnjatkYYaA7jBU=\n"
+                            "-----END CERTIFICATE-----\n";
+
 std::string getOpenSSLError()
 {
     BIO *bio = BIO_new(BIO_s_mem());
@@ -80,7 +116,7 @@ void LoadCertificates(SSL_CTX* ctx, char* CertFile, char* KeyFile)
     }
 }
 
-void VerifyCertificate(SSL_CTX* ctx) {
+int VerifyCertificate(SSL_CTX* ctx) {
     X509_STORE *store;
     X509 *cert = NULL;
     BIO *bio = BIO_new_mem_buf(root_ca, -1);
@@ -100,9 +136,7 @@ void VerifyCertificate(SSL_CTX* ctx) {
 
     X509_STORE_CTX *store_ctx = X509_STORE_CTX_new();
     X509_STORE_CTX_init(store_ctx, store, cert, NULL);
-    int res = X509_verify_cert(store_ctx);
-
-    printf("Verify result : %d\n", res);
+    return X509_verify_cert(store_ctx);
 }
 
 
@@ -110,107 +144,92 @@ int main(int argc, char *argv[])
 {
     std::cout << "Hello code" << std::endl;
 
-    while (1)
+    TTcpListenPort *TcpListenPort;
+    TTcpConnectedPort *TcpConnectedPort;
+    struct sockaddr_in cli_addr;
+    socklen_t clilen;
+
+    // SSL Context 관련 구조체 선언
+    SSL_CTX *ctx = InitServerCTX();
+    LoadCertificates(ctx, "../../Certificates/server.pem", "../../Certificates/server.key");
+
+    //  Listen
+    if ((TcpListenPort = OpenTcpListenPort(5555)) == NULL)
     {
-        TTcpListenPort *TcpListenPort;
-        TTcpConnectedPort *TcpConnectedPort;
-        struct sockaddr_in cli_addr;
-        socklen_t clilen;
+        printf("OpenTcpListenPortFiled\n");
+        return (-1);
+    }
 
-        // SSL Context 관련 구조체 선언
-        SSL_CTX *ctx = InitServerCTX();
-        LoadCertificates(ctx, "../../Certificates/server.pem", "../../Certificates/server.key");
+    clilen = sizeof(cli_addr);
+    printf("Listening for connections\n");
+    if ((TcpConnectedPort = AcceptTcpConnection(TcpListenPort, &cli_addr, &clilen)) == NULL)
+    {
+        printf("AcceptTcpConnection Failed\n");
+        return (-1);
+    }
+    printf("Connection from %1x, port %x\n", cli_addr.sin_addr.s_addr, cli_addr.sin_port);
 
-        //  Listen
-        if ((TcpListenPort = OpenTcpListenPort(5555)) == NULL)
+    /* TCP connection is ready. Do server side SSL. */
+    SSL *ssl = SSL_new(ctx); // 설정된 Context를 이용하여 SSL 세션의 초기화 작업을 수행한다.
+    CHK_NULL(ssl);
+    SSL_set_fd(ssl, TcpConnectedPort->ConnectedFd);
+    int err = SSL_accept(ssl);    // SSL 세션을 통해 클라이언트의 접속을 대기한다.
+    if((err) == -1) {
+        printf("SSL_accept Failed\n");
+        printf("%s", getOpenSSLError().c_str());
+        exit(2);
+    }
+
+    /* Get the cipher – opt */
+    printf("SSL connection using %s\n", SSL_get_cipher(ssl));
+
+    int verified = VerifyCertificate(ctx);
+    if (verified <= 0) {
+        printf("Verify failed (%d)\n", verified);
+
+        SSL_free(ssl);
+
+        CloseTcpConnectedPort(&TcpConnectedPort); // Close network port;
+        SSL_CTX_free(ctx);
+        return -1;
+    }
+
+    std::string msg_to_send = "Hello There~!!!";
+    unsigned int data_size = msg_to_send.length() + 1;
+    std::cout << "SENDING : " << msg_to_send << std::endl;
+
+    if (!ssl)
+    {
+        printf("Accepted connection Request on socket\n");
+        if (WriteDataTcp(TcpConnectedPort, (unsigned char *)&data_size, sizeof(data_size)) != sizeof(data_size))
         {
-            printf("OpenTcpListenPortFiled\n");
+            printf("Mismatch write data\n");
             return (-1);
         }
+        WriteDataTcp(TcpConnectedPort, (unsigned char *)msg_to_send.c_str(), data_size);
 
-        clilen = sizeof(cli_addr);
-        printf("Listening for connections\n");
-        if ((TcpConnectedPort = AcceptTcpConnection(TcpListenPort, &cli_addr, &clilen)) == NULL)
-        {
-            printf("AcceptTcpConnection Failed\n");
-            return (-1);
+        printf("Data sent and closing\n");
+        CloseTcpConnectedPort(&TcpConnectedPort);
+    } else {
+        printf("Accepted connection Request on SSL\n");
+        err = SSL_write(ssl, (unsigned char *)&data_size, sizeof(data_size));
+        if ((err) == -1) {
+            printf("SSL_write Failed 1\n");
+            exit(2);
         }
-        printf("Connection from %1x, port %x\n", cli_addr.sin_addr.s_addr, cli_addr.sin_port);
-
-        /* TCP connection is ready. Do server side SSL. */
-        SSL *ssl = SSL_new(ctx); // 설정된 Context를 이용하여 SSL 세션의 초기화 작업을 수행한다.
-        CHK_NULL(ssl);
-        SSL_set_fd(ssl, TcpConnectedPort->ConnectedFd);
-        int err = SSL_accept(ssl);    // SSL 세션을 통해 클라이언트의 접속을 대기한다.
+        err = SSL_write(ssl, (unsigned char *)msg_to_send.c_str(), data_size);
         if((err) == -1) {
-            printf("SSL_accept Failed\n");
-            printf("%s", getOpenSSLError().c_str());
+            printf("SSL_write Failed 2\n");
             exit(2);
         }
 
-        /* Get the cipher – opt */
-        printf("SSL connection using %s\n", SSL_get_cipher(ssl));
-
-        //  TODO: client 인증서를 받음
-        X509 *client_cert = SSL_get_peer_certificate(ssl);
-        if(client_cert != NULL) {
-            printf("Client certificate:\n");
-
-            char* str = X509_NAME_oneline(X509_get_subject_name(client_cert), 0, 0);
-            CHK_NULL(str);
-            printf("\t subject: %s\n", str);
-            OPENSSL_free(str);
-
-            str = X509_NAME_oneline(X509_get_issuer_name(client_cert), 0, 0);
-            CHK_NULL(str);
-            printf("\t issuer: %s\n", str);
-            OPENSSL_free(str);
-
-            VerifyCertificate(ctx);
-            /* We could do all sorts of certificate verification stuff here before deallocating the certificate. */
-            X509_free(client_cert);
-        } else {
-            printf("Client does not have certificate.\n");
-        }
-
-
-        std::string msg_to_send = "Hello There~!!!";
-        unsigned int data_size = msg_to_send.length() + 1;
-        std::cout << "SENDING : " << msg_to_send << std::endl;
-
-        if (!ssl)
-        {
-            printf("Accepted connection Request on socket\n");
-            if (WriteDataTcp(TcpConnectedPort, (unsigned char *)&data_size, sizeof(data_size)) != sizeof(data_size))
-            {
-                printf("Mismatch write data\n");
-                return (-1);
-            }
-            WriteDataTcp(TcpConnectedPort, (unsigned char *)msg_to_send.c_str(), data_size);
-
-            printf("Data sent and closing\n");
-            CloseTcpConnectedPort(&TcpConnectedPort);
-        } else {
-            printf("Accepted connection Request on SSL\n");
-            err = SSL_write(ssl, (unsigned char *)&data_size, sizeof(data_size));
-            if ((err) == -1) {
-                printf("SSL_write Failed 1\n");
-                exit(2);
-            }
-            err = SSL_write(ssl, (unsigned char *)msg_to_send.c_str(), data_size);
-            if((err) == -1) {
-                printf("SSL_write Failed 2\n");
-                exit(2);
-            }
-
-            printf("Data sent and closing\n");
-            close(TcpConnectedPort->ConnectedFd);
-            SSL_free(ssl);
-            SSL_CTX_free(ctx);
-        }
-
-
+        printf("Data sent and closing\n");
+        close(TcpConnectedPort->ConnectedFd);
+        SSL_free(ssl);
+        SSL_CTX_free(ctx);
     }
+
+
 
     return 0;
 }

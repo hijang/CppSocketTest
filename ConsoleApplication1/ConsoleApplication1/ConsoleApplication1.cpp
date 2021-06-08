@@ -32,6 +32,42 @@ static const char* root_ca = "-----BEGIN CERTIFICATE-----\n"
                             "txYcyeSWQB/hzAIgez3HVhXUOKoAat9/hS86IG/bdubhggy4wOujM2ebfXM=\n"
                             "-----END CERTIFICATE-----";
 
+static const char* asr_ca = "-----BEGIN CERTIFICATE-----\n"
+                            "MIIGGTCCBAGgAwIBAgIQE31TnKp8MamkM3AZaIR6jTANBgkqhkiG9w0BAQwFADCB\n"
+                            "iDELMAkGA1UEBhMCVVMxEzARBgNVBAgTCk5ldyBKZXJzZXkxFDASBgNVBAcTC0pl\n"
+                            "cnNleSBDaXR5MR4wHAYDVQQKExVUaGUgVVNFUlRSVVNUIE5ldHdvcmsxLjAsBgNV\n"
+                            "BAMTJVVTRVJUcnVzdCBSU0EgQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkwHhcNMTgx\n"
+                            "MTAyMDAwMDAwWhcNMzAxMjMxMjM1OTU5WjCBlTELMAkGA1UEBhMCR0IxGzAZBgNV\n"
+                            "BAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEYMBYGA1UE\n"
+                            "ChMPU2VjdGlnbyBMaW1pdGVkMT0wOwYDVQQDEzRTZWN0aWdvIFJTQSBPcmdhbml6\n"
+                            "YXRpb24gVmFsaWRhdGlvbiBTZWN1cmUgU2VydmVyIENBMIIBIjANBgkqhkiG9w0B\n"
+                            "AQEFAAOCAQ8AMIIBCgKCAQEAnJMCRkVKUkiS/FeN+S3qU76zLNXYqKXsW2kDwB0Q\n"
+                            "9lkz3v4HSKjojHpnSvH1jcM3ZtAykffEnQRgxLVK4oOLp64m1F06XvjRFnG7ir1x\n"
+                            "on3IzqJgJLBSoDpFUd54k2xiYPHkVpy3O/c8Vdjf1XoxfDV/ElFw4Sy+BKzL+k/h\n"
+                            "fGVqwECn2XylY4QZ4ffK76q06Fha2ZnjJt+OErK43DOyNtoUHZZYQkBuCyKFHFEi\n"
+                            "rsTIBkVtkuZntxkj5Ng2a4XQf8dS48+wdQHgibSov4o2TqPgbOuEQc6lL0giE5dQ\n"
+                            "YkUeCaXMn2xXcEAG2yDoG9bzk4unMp63RBUJ16/9fAEc2wIDAQABo4IBbjCCAWow\n"
+                            "HwYDVR0jBBgwFoAUU3m/WqorSs9UgOHYm8Cd8rIDZsswHQYDVR0OBBYEFBfZ1iUn\n"
+                            "Z/kxwklD2TA2RIxsqU/rMA4GA1UdDwEB/wQEAwIBhjASBgNVHRMBAf8ECDAGAQH/\n"
+                            "AgEAMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAbBgNVHSAEFDASMAYG\n"
+                            "BFUdIAAwCAYGZ4EMAQICMFAGA1UdHwRJMEcwRaBDoEGGP2h0dHA6Ly9jcmwudXNl\n"
+                            "cnRydXN0LmNvbS9VU0VSVHJ1c3RSU0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNy\n"
+                            "bDB2BggrBgEFBQcBAQRqMGgwPwYIKwYBBQUHMAKGM2h0dHA6Ly9jcnQudXNlcnRy\n"
+                            "dXN0LmNvbS9VU0VSVHJ1c3RSU0FBZGRUcnVzdENBLmNydDAlBggrBgEFBQcwAYYZ\n"
+                            "aHR0cDovL29jc3AudXNlcnRydXN0LmNvbTANBgkqhkiG9w0BAQwFAAOCAgEAThNA\n"
+                            "lsnD5m5bwOO69Bfhrgkfyb/LDCUW8nNTs3Yat6tIBtbNAHwgRUNFbBZaGxNh10m6\n"
+                            "pAKkrOjOzi3JKnSj3N6uq9BoNviRrzwB93fVC8+Xq+uH5xWo+jBaYXEgscBDxLmP\n"
+                            "bYox6xU2JPti1Qucj+lmveZhUZeTth2HvbC1bP6mESkGYTQxMD0gJ3NR0N6Fg9N3\n"
+                            "OSBGltqnxloWJ4Wyz04PToxcvr44APhL+XJ71PJ616IphdAEutNCLFGIUi7RPSRn\n"
+                            "R+xVzBv0yjTqJsHe3cQhifa6ezIejpZehEU4z4CqN2mLYBd0FUiRnG3wTqN3yhsc\n"
+                            "SPr5z0noX0+FCuKPkBurcEya67emP7SsXaRfz+bYipaQ908mgWB2XQ8kd5GzKjGf\n"
+                            "FlqyXYwcKapInI5v03hAcNt37N3j0VcFcC3mSZiIBYRiBXBWdoY5TtMibx3+bfEO\n"
+                            "s2LEPMvAhblhHrrhFYBZlAyuBbuMf1a+HNJav5fyakywxnB2sJCNwQs2uRHY1ihc\n"
+                            "6k/+JLcYCpsM0MF8XPtpvcyiTcaQvKZN8rG61ppnW5YCUtCC+cQKXA0o4D/I+pWV\n"
+                            "idWkvklsQLI+qGu41SWyxP7x09fn1txDAXYw+zuLXfdKiXyaNb78yvBXAfCNP6CH\n"
+                            "MntHWpdLgtJmwsQt6j8k9Kf5qLnjatkYYaA7jBU=\n"
+                            "-----END CERTIFICATE-----\n";
+
 /*---------------------------------------------------------------------*/
 /*--- InitCTX - initialize the SSL engine.                          ---*/
 /*---------------------------------------------------------------------*/
@@ -158,7 +194,7 @@ int main()
     }
 
     int verified = VerifyCertificate(ctx);
-    if (verified == 0) {
+    if (verified <= 0) {
         printf("Verify failed (%d)\n", verified);
 
         SSL_free(ssl);
@@ -168,43 +204,50 @@ int main()
         return -1;
     }
 
-    printf("Connected~!\n");
-    if (!ssl)
-    {
-        unsigned int imagesize;
-        unsigned char* buff;	/* receive buffer */
+    do {
+        if (!ssl)
+        {
+            unsigned int imagesize;
+            unsigned char* buff;	/* receive buffer */
 
-        if (ReadDataTcp(TcpConnectedPort, (unsigned char*)&imagesize, sizeof(imagesize)) != sizeof(imagesize)) return(false);
+            if (ReadDataTcp(TcpConnectedPort, (unsigned char*)&imagesize, sizeof(imagesize)) != sizeof(imagesize)) return(false);
 
-        //imagesize = ntohl(imagesize); // convert image size to host format
+            //imagesize = ntohl(imagesize); // convert image size to host format
 
-        printf("imagesize??? %d\n", imagesize);
-        if (imagesize < 0) return false;
+            printf("imagesize??? %d\n", imagesize);
+            if (imagesize < 0) break;
 
-        buff = new (std::nothrow) unsigned char[imagesize];
-        if (buff == NULL) return false;
-        memset(buff, imagesize, 0x00);
+            buff = new (std::nothrow) unsigned char[imagesize];
+            if (buff == NULL) break;
+            memset(buff, imagesize, 0x00);
 
-        ReadDataTcp(TcpConnectedPort, buff, imagesize);
+            ReadDataTcp(TcpConnectedPort, buff, imagesize);
 
-        printf("%s\n", buff);
-    }
-    else 
-    {
-        unsigned int imagesize;
-        unsigned char* buff;	/* receive buffer */
+            printf("%s\n", buff);
+        }
+        else
+        {
+            unsigned int imagesize;
+            unsigned char* buff;	/* receive buffer */
 
-        SSL_read(ssl, &imagesize, sizeof(imagesize));
-        printf("imagesize??? %d\n", imagesize);
-        if (imagesize < 0) return false;
+            int success = SSL_read(ssl, &imagesize, sizeof(imagesize));
+            if (!success) break;
+            printf("success = %d, imagesize??? %d\n", success, imagesize);
+            if (imagesize < 0) break;
 
-        buff = new (std::nothrow) unsigned char[imagesize];
-        if (buff == NULL) return false;
-        memset(buff, imagesize, 0x00);
+            printf("Connected~!\n");
 
-        SSL_read(ssl, buff, imagesize);
-        printf("%s\n", buff);
-    }
+            buff = new (std::nothrow) unsigned char[imagesize];
+            if (buff == NULL) break;
+            memset(buff, imagesize, 0x00);
+
+            success = SSL_read(ssl, buff, imagesize);
+            if (!success) break;
+            printf("success = %d, %s\n", success, buff);
+        }
+        
+    } while (0);
+    
 
     SSL_free(ssl);
 
