@@ -4,27 +4,39 @@
 #include <openssl/err.h>
 #include "NetworkTCP.h"
 
-#define CHK_NULL(x) if((x) == NULL) exit(1);
-#define CHK_ERR(err, s) if((err) == -1) { perror(s); exit(1); }
-#define CHK_SSL(err) if((err) == -1) { ERR_print_errors_fp(stderr); exit(2); }
+#define CHK_NULL(x)  \
+    if ((x) == NULL) \
+        exit(1);
+#define CHK_ERR(err, s) \
+    if ((err) == -1)    \
+    {                   \
+        perror(s);      \
+        exit(1);        \
+    }
+#define CHK_SSL(err)                 \
+    if ((err) == -1)                 \
+    {                                \
+        ERR_print_errors_fp(stderr); \
+        exit(2);                     \
+    }
 
 static std::vector<unsigned char> sendbuff;
-static const char* root_ca = "-----BEGIN CERTIFICATE-----\n"
-                        "MIICODCCAd8CFGnngwBSCkZRYpt92Eo8R4SyB1h8MAoGCCqGSM49BAMCMIGdMQsw\n"
-                        "CQYDVQQGEwJLUjEOMAwGA1UECAwFU2VvdWwxEDAOBgNVBAcMB0dhbmduYW0xDDAK\n"
-                        "BgNVBAoMA0xHRTEWMBQGA1UECwwNU2VjU3BlY2lhbGlzdDElMCMGA1UEAwwcNHRl\n"
-                        "bnRpYWwgQ0EgUm9vdCBDZXJ0aWZpY2F0ZTEfMB0GCSqGSIb3DQEJARYQdGVobG9v\n"
-                        "QGdtYWlsLmNvbTAgFw0yMTA2MDUxNzEwNThaGA80NzU5MDUwMjE3MTA1OFowgZ0x\n"
-                        "CzAJBgNVBAYTAktSMQ4wDAYDVQQIDAVTZW91bDEQMA4GA1UEBwwHR2FuZ25hbTEM\n"
-                        "MAoGA1UECgwDTEdFMRYwFAYDVQQLDA1TZWNTcGVjaWFsaXN0MSUwIwYDVQQDDBw0\n"
-                        "dGVudGlhbCBDQSBSb290IENlcnRpZmljYXRlMR8wHQYJKoZIhvcNAQkBFhB0ZWhs\n"
-                        "b29AZ21haWwuY29tMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE4O7qjNWPVgUF\n"
-                        "5CPbbe24bAGyV+AKKrrtbQ/eaYn90kpmtkL7o5br7GsZISW2SBbmBmYRH4Igg3/Y\n"
-                        "ftf4j0BCTDAKBggqhkjOPQQDAgNHADBEAiByX2OOGwkPgJm0hFm/Z5UjTvkLbPUK\n"
-                        "txYcyeSWQB/hzAIgez3HVhXUOKoAat9/hS86IG/bdubhggy4wOujM2ebfXM=\n"
-                        "-----END CERTIFICATE-----";
+static const char *root_ca = "-----BEGIN CERTIFICATE-----\n"
+                             "MIICODCCAd8CFGnngwBSCkZRYpt92Eo8R4SyB1h8MAoGCCqGSM49BAMCMIGdMQsw\n"
+                             "CQYDVQQGEwJLUjEOMAwGA1UECAwFU2VvdWwxEDAOBgNVBAcMB0dhbmduYW0xDDAK\n"
+                             "BgNVBAoMA0xHRTEWMBQGA1UECwwNU2VjU3BlY2lhbGlzdDElMCMGA1UEAwwcNHRl\n"
+                             "bnRpYWwgQ0EgUm9vdCBDZXJ0aWZpY2F0ZTEfMB0GCSqGSIb3DQEJARYQdGVobG9v\n"
+                             "QGdtYWlsLmNvbTAgFw0yMTA2MDUxNzEwNThaGA80NzU5MDUwMjE3MTA1OFowgZ0x\n"
+                             "CzAJBgNVBAYTAktSMQ4wDAYDVQQIDAVTZW91bDEQMA4GA1UEBwwHR2FuZ25hbTEM\n"
+                             "MAoGA1UECgwDTEdFMRYwFAYDVQQLDA1TZWNTcGVjaWFsaXN0MSUwIwYDVQQDDBw0\n"
+                             "dGVudGlhbCBDQSBSb290IENlcnRpZmljYXRlMR8wHQYJKoZIhvcNAQkBFhB0ZWhs\n"
+                             "b29AZ21haWwuY29tMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE4O7qjNWPVgUF\n"
+                             "5CPbbe24bAGyV+AKKrrtbQ/eaYn90kpmtkL7o5br7GsZISW2SBbmBmYRH4Igg3/Y\n"
+                             "ftf4j0BCTDAKBggqhkjOPQQDAgNHADBEAiByX2OOGwkPgJm0hFm/Z5UjTvkLbPUK\n"
+                             "txYcyeSWQB/hzAIgez3HVhXUOKoAat9/hS86IG/bdubhggy4wOujM2ebfXM=\n"
+                             "-----END CERTIFICATE-----";
 
-static const char* asr_ca = "-----BEGIN CERTIFICATE-----\n"
+static const char *asr_ca = "-----BEGIN CERTIFICATE-----\n"
                             "MIIGGTCCBAGgAwIBAgIQE31TnKp8MamkM3AZaIR6jTANBgkqhkiG9w0BAQwFADCB\n"
                             "iDELMAkGA1UEBhMCVVMxEzARBgNVBAgTCk5ldyBKZXJzZXkxFDASBgNVBAcTC0pl\n"
                             "cnNleSBDaXR5MR4wHAYDVQQKExVUaGUgVVNFUlRSVVNUIE5ldHdvcmsxLjAsBgNV\n"
@@ -74,16 +86,16 @@ std::string getOpenSSLError()
 /*---------------------------------------------------------------------*/
 /*--- InitServerCTX - initialize SSL server  and create context     ---*/
 /*---------------------------------------------------------------------*/
-SSL_CTX* InitServerCTX(void)
+SSL_CTX *InitServerCTX(void)
 {
     const SSL_METHOD *method;
     SSL_CTX *ctx;
 
     SSL_library_init();
-    OpenSSL_add_all_algorithms();        /* load & register all cryptos, etc. */
-    SSL_load_error_strings();            /* load all error messages */
-    method = SSLv23_server_method();        /* create new server-method instance */
-    ctx = SSL_CTX_new(method);            /* create new context from method */
+    OpenSSL_add_all_algorithms();    /* load & register all cryptos, etc. */
+    SSL_load_error_strings();        /* load all error messages */
+    method = SSLv23_server_method(); /* create new server-method instance */
+    ctx = SSL_CTX_new(method);       /* create new context from method */
     if (ctx == NULL)
     {
         printf("ctx error\n");
@@ -94,35 +106,37 @@ SSL_CTX* InitServerCTX(void)
 /*---------------------------------------------------------------------*/
 /*--- LoadCertificates - load from files.                           ---*/
 /*---------------------------------------------------------------------*/
-void LoadCertificates(SSL_CTX* ctx, char* CertFile, char* KeyFile)
+void LoadCertificates(SSL_CTX *ctx, char *CertFile, char *KeyFile)
 {
     /* set the local certificate from CertFile */
-    if ( SSL_CTX_use_certificate_file(ctx, CertFile, SSL_FILETYPE_PEM) <= 0 )
+    if (SSL_CTX_use_certificate_file(ctx, CertFile, SSL_FILETYPE_PEM) <= 0)
     {
         ERR_print_errors_fp(stderr);
         abort();
     }
     /* set the private key from KeyFile (may be the same as CertFile) */
-    if ( SSL_CTX_use_PrivateKey_file(ctx, KeyFile, SSL_FILETYPE_PEM) <= 0 )
+    if (SSL_CTX_use_PrivateKey_file(ctx, KeyFile, SSL_FILETYPE_PEM) <= 0)
     {
         ERR_print_errors_fp(stderr);
         abort();
     }
     /* verify private key */
-    if ( !SSL_CTX_check_private_key(ctx) )
+    if (!SSL_CTX_check_private_key(ctx))
     {
         fprintf(stderr, "Private key does not match the public certificate\n");
         abort();
     }
 }
 
-int VerifyCertificate(SSL_CTX* ctx) {
+int VerifyCertificate(SSL_CTX *ctx)
+{
     X509_STORE *store;
     X509 *cert = NULL;
     BIO *bio = BIO_new_mem_buf(root_ca, -1);
 
     PEM_read_bio_X509(bio, &cert, 0, NULL);
-    if (cert == NULL) {
+    if (cert == NULL)
+    {
         printf("PEM_read_bio_X509 failed...\n");
     }
 
@@ -130,7 +144,8 @@ int VerifyCertificate(SSL_CTX* ctx) {
     store = SSL_CTX_get_cert_store((SSL_CTX *)ctx);
 
     /* add our certificate to this store */
-    if (X509_STORE_add_cert(store, cert) == 0) {
+    if (X509_STORE_add_cert(store, cert) == 0)
+    {
         printf("error adding certificate\n");
     }
 
@@ -139,6 +154,34 @@ int VerifyCertificate(SSL_CTX* ctx) {
     return X509_verify_cert(store_ctx);
 }
 
+static int verify_callback(int preverify_ok, X509_STORE_CTX *ctx)
+{
+    char buf[256];
+    X509 *err_cert;
+    int err, depth;
+    SSL *ssl;
+
+    err_cert = X509_STORE_CTX_get_current_cert(ctx);
+    err = X509_STORE_CTX_get_error(ctx);
+    depth = X509_STORE_CTX_get_error_depth(ctx);
+    std::cout << "depth? " << depth << std::endl;
+
+    char* str = X509_NAME_oneline(X509_get_subject_name(err_cert), buf, 256);
+    CHK_NULL(str);
+    printf("\t subject: %s\n", str);
+
+    str = X509_NAME_oneline(X509_get_issuer_name(err_cert), buf, 256);
+    CHK_NULL(str);
+    printf("\t issuer: %s\n", str);
+
+    if (!preverify_ok)
+    {
+        printf("verify error:num=%d:%s:depth=%d:%s\n", err,
+               X509_verify_cert_error_string(err), depth, buf);
+    }
+
+    return preverify_ok;
+}
 
 int main(int argc, char *argv[])
 {
@@ -153,6 +196,9 @@ int main(int argc, char *argv[])
     SSL_CTX *ctx = InitServerCTX();
     LoadCertificates(ctx, "../../Certificates/server.pem", "../../Certificates/server.key");
 
+    SSL_CTX_set_verify(ctx, SSL_VERIFY_PEER| SSL_VERIFY_FAIL_IF_NO_PEER_CERT, NULL);
+    SSL_CTX_set_verify_depth(ctx, 4);
+    SSL_CTX_load_verify_locations(ctx, "../../Certificates/rootca.crt", NULL);
     //  Listen
     if ((TcpListenPort = OpenTcpListenPort(5555)) == NULL)
     {
@@ -173,8 +219,10 @@ int main(int argc, char *argv[])
     SSL *ssl = SSL_new(ctx); // 설정된 Context를 이용하여 SSL 세션의 초기화 작업을 수행한다.
     CHK_NULL(ssl);
     SSL_set_fd(ssl, TcpConnectedPort->ConnectedFd);
-    int err = SSL_accept(ssl);    // SSL 세션을 통해 클라이언트의 접속을 대기한다.
-    if((err) == -1) {
+
+    int err = SSL_accept(ssl); // SSL 세션을 통해 클라이언트의 접속을 대기한다.
+    if ((err) == -1)
+    {
         printf("SSL_accept Failed\n");
         printf("%s", getOpenSSLError().c_str());
         exit(2);
@@ -183,10 +231,27 @@ int main(int argc, char *argv[])
     /* Get the cipher – opt */
     printf("SSL connection using %s\n", SSL_get_cipher(ssl));
 
-    int verified = VerifyCertificate(ctx);
-    if (verified <= 0) {
-        printf("Verify failed (%d)\n", verified);
+    X509 *client_cert = SSL_get_peer_certificate(ssl);
+    if (client_cert != NULL)
+    {
+        printf("Client certificate:\n");
 
+        char *str = X509_NAME_oneline(X509_get_subject_name(client_cert), 0, 0);
+        CHK_NULL(str);
+        printf("\t subject: %s\n", str);
+        OPENSSL_free(str);
+
+        str = X509_NAME_oneline(X509_get_issuer_name(client_cert), 0, 0);
+        CHK_NULL(str);
+        printf("\t issuer: %s\n", str);
+        OPENSSL_free(str);
+
+        /* We could do all sorts of certificate verification stuff here before deallocating the certificate. */
+        X509_free(client_cert);
+    }
+    else
+    {
+        printf("Client does not have certificate.\n");
         SSL_free(ssl);
 
         CloseTcpConnectedPort(&TcpConnectedPort); // Close network port;
@@ -210,15 +275,19 @@ int main(int argc, char *argv[])
 
         printf("Data sent and closing\n");
         CloseTcpConnectedPort(&TcpConnectedPort);
-    } else {
+    }
+    else
+    {
         printf("Accepted connection Request on SSL\n");
         err = SSL_write(ssl, (unsigned char *)&data_size, sizeof(data_size));
-        if ((err) == -1) {
+        if ((err) == -1)
+        {
             printf("SSL_write Failed 1\n");
             exit(2);
         }
         err = SSL_write(ssl, (unsigned char *)msg_to_send.c_str(), data_size);
-        if((err) == -1) {
+        if ((err) == -1)
+        {
             printf("SSL_write Failed 2\n");
             exit(2);
         }
@@ -228,8 +297,6 @@ int main(int argc, char *argv[])
         SSL_free(ssl);
         SSL_CTX_free(ctx);
     }
-
-
 
     return 0;
 }

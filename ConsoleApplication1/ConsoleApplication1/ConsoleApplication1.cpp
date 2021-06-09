@@ -85,10 +85,6 @@ SSL_CTX* InitCTX(void)
     {
         printf("ctx Error\n");
     }
-
-    /* Cannot fail ??? */
-    const long flags = SSL_OP_NO_SSLv2 | SSL_OP_NO_SSLv3 | SSL_OP_NO_COMPRESSION;
-    SSL_CTX_set_options(ctx, flags);
     return ctx;
 }
 
@@ -117,6 +113,7 @@ void LoadCertificates(SSL_CTX* ctx, const char* CertFile, const char* KeyFile)
         abort();
     }
 }
+
 
 int VerifyCertificate(SSL_CTX* ctx) {
     X509_STORE* store;
@@ -156,7 +153,6 @@ int main()
 
     ctx = InitCTX();
     LoadCertificates(ctx, "..\\..\\Certificates\\client.crt", "..\\..\\Certificates\\client.key");
-
     ssl = SSL_new(ctx);
 
     if ((TcpConnectedPort = OpenTcpConnection(hostname, port)) == NULL)  // Open UDP Network port
@@ -164,29 +160,29 @@ int main()
         printf("OpenTcpConnection\n");
         return(-1);
     }
-
     SSL_set_fd(ssl, TcpConnectedPort->ConnectedFd);
+
     if (SSL_connect(ssl) == -1) {
         printf("Connect failed\n");
         return(-1);
     }
 
-    X509* client_cert = SSL_get_peer_certificate(ssl);
-    if (client_cert != NULL) {
+    X509* server_cert = SSL_get_peer_certificate(ssl);
+    if (server_cert != NULL) {
         printf("Client certificate:\n");
 
-        char* str = X509_NAME_oneline(X509_get_subject_name(client_cert), 0, 0);
+        char* str = X509_NAME_oneline(X509_get_subject_name(server_cert), 0, 0);
         CHK_NULL(str);
         printf("\t subject: %s\n", str);
         OPENSSL_free(str);
 
-        str = X509_NAME_oneline(X509_get_issuer_name(client_cert), 0, 0);
+        str = X509_NAME_oneline(X509_get_issuer_name(server_cert), 0, 0);
         CHK_NULL(str);
         printf("\t issuer: %s\n", str);
         OPENSSL_free(str);
 
         /* We could do all sorts of certificate verification stuff here before deallocating the certificate. */
-        X509_free(client_cert);
+        X509_free(server_cert);
     }
     else {
         printf("Server does not have certificate.\n");
@@ -231,7 +227,7 @@ int main()
             unsigned char* buff;	/* receive buffer */
 
             int success = SSL_read(ssl, &imagesize, sizeof(imagesize));
-            if (!success) break;
+            if (success <= 0) break;
             printf("success = %d, imagesize??? %d\n", success, imagesize);
             if (imagesize < 0) break;
 
@@ -242,7 +238,7 @@ int main()
             memset(buff, imagesize, 0x00);
 
             success = SSL_read(ssl, buff, imagesize);
-            if (!success) break;
+			if (success <= 0) break;
             printf("success = %d, %s\n", success, buff);
         }
         
