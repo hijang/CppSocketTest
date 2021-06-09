@@ -13,6 +13,23 @@
 #include <openssl/ssl.h>
 #include <openssl/err.h>
 
+#include <stdio.h>
+#include <windows.h>
+#include <wincrypt.h>
+#include <cryptuiapi.h>
+#include <iostream>
+#include <tchar.h>
+
+#include "openssl\x509.h"
+
+#pragma comment (lib, "crypt32.lib")
+#pragma comment (lib, "cryptui.lib")
+
+#define MY_ENCODING_TYPE  (PKCS_7_ASN_ENCODING | X509_ASN_ENCODING)
+
+
+
+
 #define CHK_NULL(x) if((x) == NULL) exit(1);
 #define CHK_ERR(err, s) if((err) == -1) { perror(s); exit(1); }
 #define CHK_SSL(err) if((err) == -1) { ERR_print_errors_fp(stderr); exit(2); }
@@ -95,6 +112,7 @@ void LoadCertificates(SSL_CTX* ctx, const char* CertFile, const char* KeyFile)
 {
     std::cout << "Load certifcates. cert: " << CertFile << "/ key: " << KeyFile << std::endl;
     /* set the local certificate from CertFile */
+    return;
     if (SSL_CTX_use_certificate_file(ctx, CertFile, SSL_FILETYPE_PEM) <= 0)
     {
         ERR_print_errors_fp(stderr);
@@ -138,8 +156,63 @@ int VerifyCertificate(SSL_CTX* ctx) {
     return X509_verify_cert(store_ctx);;
 }
 
+
+
+void  for_test()
+{
+
+    HCERTSTORE hStore;
+    PCCERT_CONTEXT pContext = NULL;
+    X509* x509;
+    X509_STORE* store = X509_STORE_new();
+
+    hStore = CertOpenSystemStore(NULL, L"my");
+
+    if (!hStore)
+        return;
+
+    pContext = CertEnumCertificatesInStore(hStore, pContext); // skip first  [DELETE ME]
+
+    while (pContext = CertEnumCertificatesInStore(hStore, pContext))
+    {
+        //uncomment the line below if you want to see the certificates as pop ups
+        //CryptUIDlgViewContext(CERT_STORE_CERTIFICATE_CONTEXT, pContext,   NULL, NULL, 0, NULL);
+        char pszNameString[200] = {};
+
+        if (CertGetNameStringA(
+            pContext,
+            CERT_NAME_SIMPLE_DISPLAY_TYPE,
+            0,
+            NULL,
+            pszNameString,
+            128))
+        {
+            printf("\nCertificate for %s \n", pszNameString);
+        }
+
+        x509 = NULL;
+        x509 = d2i_X509(NULL, (const unsigned char**)&pContext->pbCertEncoded, pContext->cbCertEncoded);
+        if (x509)
+        {
+            int i = X509_STORE_add_cert(store, x509);
+
+            if (i == 1)
+                std::cout << "certificate added" << std::endl;
+
+            X509_free(x509);
+        }
+    }
+
+}
+
+  
 int main()
 {
+    
+    
+
+
+
     SSL_CTX* ctx;
     SSL* ssl;
 
@@ -148,7 +221,7 @@ int main()
     TTcpConnectedPort* TcpConnectedPort = NULL;
     bool retvalue;
 
-    const char* hostname = "172.26.71.209";
+    const char* hostname = "127.0.0.1";
     const char* port = "5555";
 
     ctx = InitCTX();
@@ -251,7 +324,7 @@ int main()
     SSL_CTX_free(ctx);
 
     return 0;
-}
+ }
 
 // 프로그램 실행: <Ctrl+F5> 또는 [디버그] > [디버깅하지 않고 시작] 메뉴
 // 프로그램 디버그: <F5> 키 또는 [디버그] > [디버깅 시작] 메뉴
